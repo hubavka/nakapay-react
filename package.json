@@ -1,0 +1,42 @@
+{
+  "name": "nakapay-react",
+  "version": "0.1.0",
+  "description": "React components for NakaPay Bitcoin Lightning payments",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp src/styles.css dist/",
+    "prepublishOnly": "npm run build",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "react",
+    "bitcoin",
+    "lightning",
+    "nakapay",
+    "payments",
+    "cryptocurrency"
+  ],
+  "author": "NakaPay Team <team@nakapay.app>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hubavka/nakapay-react.git"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "nakapay-sdk": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ]
+}
