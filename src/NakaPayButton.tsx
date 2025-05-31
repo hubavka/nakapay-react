@@ -25,6 +25,9 @@ export interface NakaPayButtonProps {
   // Webhook support options
   webhookUrl?: string;
   useWebhooks?: boolean;
+  useSSE?: boolean; // Server-Sent Events support for Vercel
+  useAbly?: boolean; // New: Ably real-time support
+  ablyApiKey?: string; // Ably API key
   pollInterval?: number;
   statusEndpoint?: string;
 }
@@ -43,6 +46,9 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
   onPaymentError,
   webhookUrl,
   useWebhooks = false,
+  useSSE = false,
+  useAbly = false,
+  ablyApiKey,
   pollInterval = 2000,
   statusEndpoint = '/api/payment-status'
 }) => {
@@ -122,6 +128,9 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
           onPaymentError={onPaymentError}
           webhookUrl={webhookUrl}
           useWebhooks={useWebhooks}
+          useSSE={useSSE}
+          useAbly={useAbly}
+          ablyApiKey={ablyApiKey}
           pollInterval={pollInterval}
           statusEndpoint={statusEndpoint}
         />

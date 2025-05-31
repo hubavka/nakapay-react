@@ -1,6 +1,6 @@
 {
   "name": "nakapay-react",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "React components for NakaPay Bitcoin Lightning payments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,7 +30,8 @@
   "dependencies": {
     "nakapay-sdk": "^0.1.1",
     "qrcode.react": "^3.1.0",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "ably": "^1.2.48"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
