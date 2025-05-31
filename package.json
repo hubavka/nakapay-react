@@ -1,6 +1,6 @@
 {
   "name": "nakapay-react",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "React components for NakaPay Bitcoin Lightning payments",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

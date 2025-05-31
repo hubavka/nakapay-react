@@ -253,9 +253,43 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
               <div style={{
                 margin: '24px 0', padding: '16px', borderRadius: '8px',
                 background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                border: '2px solid #e2e8f0'
+                border: '2px solid #e2e8f0',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}>
-                <QRCode value={payment.invoice} size={200} style={{ borderRadius: '8px' }} />
+                {(() => {
+                  try {
+                    return <QRCode value={payment.invoice} size={200} style={{ borderRadius: '8px' }} />;
+                  } catch (error) {
+                    console.error('QR Code generation failed:', error);
+                    // Fallback: show invoice text with instruction to copy
+                    return (
+                      <div style={{ 
+                        padding: '20px', 
+                        textAlign: 'center',
+                        background: '#f0f0f0',
+                        borderRadius: '8px',
+                        width: '100%'
+                      }}>
+                        <div style={{ marginBottom: '10px', fontSize: '14px', color: '#666' }}>
+                          QR code unavailable - copy invoice below
+                        </div>
+                        <div style={{ 
+                          fontSize: '12px', 
+                          fontFamily: 'monospace', 
+                          wordBreak: 'break-all',
+                          background: 'white',
+                          padding: '10px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd'
+                        }}>
+                          {payment.invoice}
+                        </div>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
 
               <div style={{
