@@ -22,6 +22,11 @@ export interface NakaPayButtonProps {
   onPaymentCreated?: (payment: Payment) => void;
   onPaymentSuccess?: (payment: Payment) => void;
   onPaymentError?: (error: Error) => void;
+  // Webhook support options
+  webhookUrl?: string;
+  useWebhooks?: boolean;
+  pollInterval?: number;
+  statusEndpoint?: string;
 }
 
 export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
@@ -35,7 +40,11 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
   disabled = false,
   onPaymentCreated,
   onPaymentSuccess,
-  onPaymentError
+  onPaymentError,
+  webhookUrl,
+  useWebhooks = false,
+  pollInterval = 2000,
+  statusEndpoint = '/api/payment-status'
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -111,6 +120,10 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
           onClose={() => setShowModal(false)}
           onPaymentSuccess={onPaymentSuccess}
           onPaymentError={onPaymentError}
+          webhookUrl={webhookUrl}
+          useWebhooks={useWebhooks}
+          pollInterval={pollInterval}
+          statusEndpoint={statusEndpoint}
         />
       )}
     </>
