@@ -73,6 +73,10 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
           if (onPaymentSuccess) {
             onPaymentSuccess({ ...payment, status: 'completed' });
           }
+          // Auto-close modal after 3 seconds
+          setTimeout(() => {
+            onClose();
+          }, 3000);
         } else if (data.event === 'payment.failed') {
           console.log(`NakaPay: Payment ${payment.id} failed via Ably!`);
           setCurrentStatus('failed');
@@ -116,6 +120,10 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
       if (data.paymentId === payment.id) {
         setCurrentStatus('completed');
         if (onPaymentSuccess) onPaymentSuccess({ ...payment, status: 'completed' });
+        // Auto-close modal after 3 seconds
+        setTimeout(() => {
+          onClose();
+        }, 3000);
       }
     });
     
@@ -144,6 +152,10 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
           if (data.event === 'payment.completed') {
             setCurrentStatus('completed');
             if (onPaymentSuccess) onPaymentSuccess({ ...payment, status: 'completed' });
+            // Auto-close modal after 3 seconds
+            setTimeout(() => {
+              onClose();
+            }, 3000);
           }
         }
       } catch (error) {
@@ -169,7 +181,13 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
         if (response.ok) {
           const statusData = await response.json();
           setCurrentStatus(statusData.status);
-          if (statusData.status === 'completed' && onPaymentSuccess) onPaymentSuccess(statusData);
+          if (statusData.status === 'completed' && onPaymentSuccess) {
+            onPaymentSuccess(statusData);
+            // Auto-close modal after 3 seconds
+            setTimeout(() => {
+              onClose();
+            }, 3000);
+          }
         }
       } catch (error) {
         console.error('Polling error:', error);
@@ -341,6 +359,9 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
               <h3 style={{ color: '#065F46', fontSize: '24px', marginBottom: '12px' }}>Payment Successful!</h3>
               <p style={{ color: '#047857', fontSize: '16px', margin: '0' }}>
                 Your payment of {payment.amount} sats has been confirmed.
+              </p>
+              <p style={{ color: '#047857', fontSize: '14px', margin: '12px 0 0 0', opacity: 0.8 }}>
+                This modal will close automatically in 3 seconds...
               </p>
             </div>
           )}
