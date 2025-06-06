@@ -62,8 +62,9 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
     
     const channel = ably.channels.get(`payment-${payment.id}`);
     
-    channel.subscribe('payment-update', (message) => {
-      console.log('NakaPay: Received Ably message:', message.data);
+    // Subscribe to payment-success event (sent by business webhooks)
+    channel.subscribe('payment-success', (message) => {
+      console.log('NakaPay: Received Ably payment-success message:', message.data);
       
       const data = message.data;
       if (data.paymentId === payment.id) {
