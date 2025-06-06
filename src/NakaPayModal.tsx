@@ -45,18 +45,14 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
   useEffect(() => {
     if (!useAbly || !ablyApiKey || currentStatus !== 'pending') return;
 
-    console.log(`NakaPay: Connecting to Ably for payment ${payment.id}`);
-    
     const ably = new Ably.Realtime(ablyApiKey);
     ablyRef.current = ably;
     
     ably.connection.on('connected', () => {
-      console.log('NakaPay: Connected to Ably');
       setAblyConnected(true);
     });
     
     ably.connection.on('disconnected', () => {
-      console.log('NakaPay: Disconnected from Ably');
       setAblyConnected(false);
     });
     
@@ -64,12 +60,9 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
     
     // Subscribe to payment-success event (sent by business webhooks)
     channel.subscribe('payment-success', (message) => {
-      console.log('NakaPay: Received Ably payment-success message:', message.data);
-      
       const data = message.data;
       if (data.paymentId === payment.id) {
         if (data.event === 'payment.completed') {
-          console.log(`NakaPay: Payment ${payment.id} completed via Ably!`);
           setCurrentStatus('completed');
           if (onPaymentSuccess) {
             onPaymentSuccess({ ...payment, status: 'completed' });
@@ -79,13 +72,11 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
             onClose();
           }, 3000);
         } else if (data.event === 'payment.failed') {
-          console.log(`NakaPay: Payment ${payment.id} failed via Ably!`);
           setCurrentStatus('failed');
           if (onPaymentError) {
             onPaymentError(new Error(data.reason || 'Payment failed'));
           }
         } else if (data.event === 'payment.expired') {
-          console.log(`NakaPay: Payment ${payment.id} expired via Ably!`);
           setCurrentStatus('expired');
           if (onPaymentError) {
             onPaymentError(new Error('Payment expired'));
@@ -95,7 +86,6 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
     });
     
     return () => {
-      console.log('NakaPay: Cleaning up Ably connection');
       if (ablyRef.current) {
         ablyRef.current.connection.close();
         ablyRef.current = null;
@@ -106,7 +96,6 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
   useEffect(() => {
     if (!useWebhooks || useAbly || useSSE || !webhookUrl || currentStatus !== 'pending') return;
 
-    console.log(`NakaPay: Connecting to WebSocket at ${webhookUrl}`);
     const socket = io(webhookUrl);
     socketRef.current = socket;
     
