@@ -2,6 +2,8 @@
 
 React components for integrating Bitcoin Lightning payments with NakaPay.
 
+⚠️ **SECURITY WARNING**: The NakaPay API key must ONLY be used on your backend server. Never expose API keys in client-side code, environment variables with `NEXT_PUBLIC_` prefix, or frontend applications.
+
 ## Installation
 
 ```bash
@@ -12,20 +14,32 @@ yarn add nakapay-react
 
 ## Quick Start
 
-### 1. Set up your backend
+### 1. Set up your backend (REQUIRED)
 
-First, ensure your backend has endpoints to create payments and check status using the `nakapay-sdk`:
+**CRITICAL**: API keys must only be used server-side. Set up backend endpoints to handle payments securely:
 
 ```javascript
-// Backend example (Express.js)
+// Backend example (Express.js) - SERVER SIDE ONLY
 const express = require('express');
 const { NakaPay } = require('nakapay-sdk');
 
 const app = express();
-const nakaPay = new NakaPay(process.env.NAKAPAY_API_KEY);
+// SECURE: API key from server environment variable only
+const nakaPay = new NakaPay(process.env.NAKAPAY_API_KEY); // NOT NEXT_PUBLIC_
 
 app.post('/api/create-payment', async (req, res) => {
   try {
+    // Add input validation
+    const { amount, description, metadata } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
+    
+    if (!description || description.trim().length === 0) {
+      return res.status(400).json({ error: 'Description required' });
+    }
+    
     const payment = await nakaPay.createPaymentRequest(req.body);
     res.json(payment);
   } catch (error) {
@@ -35,7 +49,13 @@ app.post('/api/create-payment', async (req, res) => {
 
 app.get('/api/payment-status/:id', async (req, res) => {
   try {
-    const status = await nakaPay.getPaymentStatus(req.params.id);
+    const { id } = req.params;
+    
+    if (!id || id.trim().length === 0) {
+      return res.status(400).json({ error: 'Payment ID required' });
+    }
+    
+    const status = await nakaPay.getPaymentStatus(id);
     res.json(status);
   } catch (error) {
     res.status(500).json({ error: error.message });
