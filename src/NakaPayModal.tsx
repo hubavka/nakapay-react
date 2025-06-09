@@ -13,7 +13,11 @@ export interface NakaPayModalProps {
   useWebhooks?: boolean;
   useSSE?: boolean;
   useAbly?: boolean; // New: Ably support
-  ablyApiKey?: string;
+  ablyApiKey?: string; // Not recommended for client-side
+  ablyAuthUrl?: string; // Recommended: secure token authentication
+  ablyAuthMethod?: 'GET' | 'POST';
+  ablyAuthHeaders?: Record<string, string>;
+  ablyAuthParams?: Record<string, any>;
   pollInterval?: number;
   statusEndpoint?: string;
 }
@@ -28,6 +32,10 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
   useSSE = false,
   useAbly = false,
   ablyApiKey,
+  ablyAuthUrl,
+  ablyAuthMethod = 'POST',
+  ablyAuthHeaders = { 'Content-Type': 'application/json' },
+  ablyAuthParams,
   pollInterval = 2000,
   statusEndpoint = '/api/payment-status'
 }) => {
@@ -43,9 +51,33 @@ export const NakaPayModal: React.FC<NakaPayModalProps> = ({
 
   // Setup Ably connection for real-time updates
   useEffect(() => {
-    if (!useAbly || !ablyApiKey || currentStatus !== 'pending') return;
+    if (!useAbly || currentStatus !== 'pending') return;
+    
+    // Check if we have either API key or auth URL
+    if (!ablyApiKey && !ablyAuthUrl) {
+      console.warn('Ably enabled but no authentication method provided');
+      return;
+    }
 
-    const ably = new Ably.Realtime(ablyApiKey);
+    let ably: Ably.Realtime;
+    
+    if (ablyAuthUrl) {
+      // Use secure token authentication (recommended)
+      ably = new Ably.Realtime({
+        authUrl: ablyAuthUrl,
+        authMethod: ablyAuthMethod,
+        authHeaders: ablyAuthHeaders,
+        authParams: {
+          paymentId: payment.id,
+          ...ablyAuthParams
+        }
+      });
+    } else {
+      // Fallback to API key (not recommended for client-side)
+      console.warn('Using Ably API key directly in client-side code is not recommended. Use ablyAuthUrl instead.');
+      ably = new Ably.Realtime(ablyApiKey!);
+    }
+    
     ablyRef.current = ably;
     
     ably.connection.on('connected', () => {

@@ -27,7 +27,11 @@ export interface NakaPayButtonProps {
   useWebhooks?: boolean;
   useSSE?: boolean; // Server-Sent Events support for Vercel
   useAbly?: boolean; // New: Ably real-time support
-  ablyApiKey?: string; // Ably API key
+  ablyApiKey?: string; // Ably API key (not recommended for client-side)
+  ablyAuthUrl?: string; // Ably auth URL for secure token authentication (recommended)
+  ablyAuthMethod?: 'GET' | 'POST'; // HTTP method for auth URL
+  ablyAuthHeaders?: Record<string, string>; // Headers for auth requests
+  ablyAuthParams?: Record<string, any>; // Additional params for auth requests
   pollInterval?: number;
   statusEndpoint?: string;
 }
@@ -49,6 +53,10 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
   useSSE = false,
   useAbly = false,
   ablyApiKey,
+  ablyAuthUrl,
+  ablyAuthMethod = 'POST',
+  ablyAuthHeaders,
+  ablyAuthParams,
   pollInterval = 2000,
   statusEndpoint = '/api/payment-status'
 }) => {
@@ -131,6 +139,10 @@ export const NakaPayButton: React.FC<NakaPayButtonProps> = ({
           useSSE={useSSE}
           useAbly={useAbly}
           ablyApiKey={ablyApiKey}
+          ablyAuthUrl={ablyAuthUrl}
+          ablyAuthMethod={ablyAuthMethod}
+          ablyAuthHeaders={ablyAuthHeaders}
+          ablyAuthParams={ablyAuthParams}
           pollInterval={pollInterval}
           statusEndpoint={statusEndpoint}
         />
